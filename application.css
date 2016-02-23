@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 html {
   height: 100%;
 }
@@ -14,4 +15,8 @@ h1  {
 
 #map {
   height: 100%;
+=======
+h1  {
+  color: red;
+>>>>>>> master
 }
