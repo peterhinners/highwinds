@@ -272,22 +272,87 @@ var styledMap = new google.maps.StyledMapType(styles,
   });
 
   var firstLineCoordinates = [
+    {lat: 40.740957, lng: -74.002119},
+    {lat: 39.016363, lng: -77.459023},
+    {lat: 33.755464, lng: -84.391533},
+    {lat: 32.800340, lng: -96.819499},
+    {lat: 34.047908, lng: -118.255536},
+    {lat: 47.614358, lng: -122.338864},
     {lat: 41.853895, lng: -87.618449},
     {lat: 40.740957, lng: -74.002119}
   ];
 
+  var secondLineCoordinates = [
+    {lat: 33.755464, lng: -84.391533},
+    {lat: 25.782360, lng: -80.193053}
+  ];
+
+  var thirdLineCoordinates = [
+    {lat: 32.800340, lng: -96.819499},
+    {lat: 25.782360, lng: -80.193053}
+  ];
+
+  var lineSymbol = {
+    path: 'M 0,-1 0,1',
+    strokeOpacity: 1,
+    scale: 4
+  };
+
   var firstLine = new google.maps.Polyline({
     path: firstLineCoordinates,
     geodesic: true,
+    strokeOpacity: 0,
     strokeColor: '#FF0000',
-    strokeOpacity: 1.0,
-    strokeWeight: 2
+    icons: [{
+      icon: lineSymbol,
+      offset: '0',
+      repeat: '20px'
+    }],
+    map: map
   });
 
-  firstLine.setMap(map);
+
+
+   var secondLine = new google.maps.Polyline({
+    path: secondLineCoordinates,
+    geodesic: true,
+    strokeOpacity: 0,
+    strokeColor: '#FF0000',
+    icons: [{
+      icon: lineSymbol,
+      offset: '0',
+      repeat: '20px'
+    }],
+    map: map
+  });
+
+  var thirdLine = new google.maps.Polyline({
+    path: thirdLineCoordinates,
+    geodesic: true,
+    strokeOpacity: 0,
+    strokeColor: '#FF0000',
+    icons: [{
+      icon: lineSymbol,
+      offset: '0',
+      repeat: '20px'
+    }],
+    map: map
+  });
 
 var nyc = new google.maps.LatLng(40.740957, -74.002119);
 var chicago = new google.maps.LatLng(41.853895, -87.618449);
+var seattle = new google.maps.LatLng(47.614358, -122.338864);
+var dc = new google.maps.LatLng(39.016363, -77.459023);
+var atlanta = new google.maps.LatLng(33.755464, -84.391533);
+var dallas = new google.maps.LatLng(32.800340, -96.819499);
+var losAngeles = new google.maps.LatLng(34.047908, -118.255536);
+var miami = new google.maps.LatLng(25.782360, -80.193053);
+
+
+
+
+
+
 var inBetween = google.maps.geometry.spherical.interpolate(nyc, chicago, 0.65);
 var distanceBetween = google.maps.geometry.spherical.computeDistanceBetween(nyc, chicago);
 
