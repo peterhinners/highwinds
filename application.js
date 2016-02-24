@@ -69,7 +69,53 @@ function initMap() {
     map: map
   });
 
+  var firstLineCoordinates = [
+    {lat: 41.853895, lng: -87.618449},
+    {lat: 40.740957, lng: -74.002119}
+  ];
 
+  var firstLine = new google.maps.Polyline({
+    path: firstLineCoordinates,
+    geodesic: true,
+    strokeColor: '#FF0000',
+    strokeOpacity: 1.0,
+    strokeWeight: 2
+  });
+
+  firstLine.setMap(map);
+
+var nyc = new google.maps.LatLng(40.740957, -74.002119);
+var chicago = new google.maps.LatLng(41.853895, -87.618449);
+var inBetween = google.maps.geometry.spherical.interpolate(nyc, chicago, 0.5);
+
+
+var markerTest = new google.maps.Marker({
+  position: inBetween,
+  map: map,
+  visible: false,
+});
+
+var myLabel = new Label();
+
+
+
+ function getDistanceFromLatLonInKm(lat1,lon1,lat2,lon2) {
+    var R = 6371; // Radius of the earth in km
+    var dLat = deg2rad(lat2-lat1);  // deg2rad below
+    var dLon = deg2rad(lon2-lon1);
+    var a =
+      Math.sin(dLat/2) * Math.sin(dLat/2) +
+      Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) *
+      Math.sin(dLon/2) * Math.sin(dLon/2)
+      ;
+    var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+    var d = R * c; // Distance in km
+    return d * 0.621371;
+ }
+
+  function deg2rad(deg) {
+    return deg * (Math.PI/180)
+  }
 
 
 
