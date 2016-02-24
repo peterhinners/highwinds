@@ -26,6 +26,8 @@ h1  {
       border: 1px solid black;*/
       position: absolute;
       font-family: monospace;
-
+      color: blue;
+      font-size: 15px;
+      padding-top: 1%;
     }
 
