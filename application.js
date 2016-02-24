@@ -295,7 +295,7 @@ var styledMap = new google.maps.StyledMapType(styles,
   var lineSymbol = {
     path: 'M 0,-1 0,1',
     strokeOpacity: 1,
-    scale: 4
+    scale: 2.5
   };
 
   var firstLine = new google.maps.Polyline({
@@ -349,21 +349,34 @@ var losAngeles = new google.maps.LatLng(34.047908, -118.255536);
 var miami = new google.maps.LatLng(25.782360, -80.193053);
 
 
+// The nine paired POPs, plus offset & unique class name
+var labelPairs = [
+  [nyc, dc, 0.4, "nycDC"],
+  [dc, atlanta, 0.4, "chicagoNY"],
+  [atlanta, miami, 0.2, "atlantaMiami"],
+  [atlanta, dallas, 0.5, "chicagoNY"],
+  [dallas, miami, 0.3, "dallasMiami"],
+  [dallas, losAngeles, 0.5, "chicagoNY"],
+  [losAngeles, seattle, 0.6, "losAngelesSeattle"],
+  [seattle, chicago, 0.5, "seattleChicago"],
+  [chicago, nyc, 0.35, "chicagoNY"]
+];
+
+for(var i = 0; i < labelPairs.length; i++){
+  var inBetween = google.maps.geometry.spherical.interpolate(labelPairs[i][0], labelPairs[i][1], labelPairs[i][2]);
+  var distanceBetween = google.maps.geometry.spherical.computeDistanceBetween(labelPairs[i][0], labelPairs[i][1]);
+  var customTxt = "<div>" + Math.round(distanceBetween * 0.000621371) + " miles</div>";
+  var txt = new TxtOverlay(inBetween, customTxt, labelPairs[i][3], map);
+}
 
 
 
 
-var inBetween = google.maps.geometry.spherical.interpolate(nyc, chicago, 0.65);
-var distanceBetween = google.maps.geometry.spherical.computeDistanceBetween(nyc, chicago);
-
-var marker = new google.maps.Marker({
-  position: inBetween,
-  map: map,
-  visible: false
-});
-
-customTxt = "<div>" + Math.round(distanceBetween * 0.000621371) + " miles</div>";
-txt = new TxtOverlay(inBetween, customTxt, "customBox", map);
+// Chicago / New York label
+// var inBetween = google.maps.geometry.spherical.interpolate(chicago, nyc, 0.5);
+// var distanceBetween = google.maps.geometry.spherical.computeDistanceBetween(chicago, nyc);
+// customTxt = "<div>" + Math.round(distanceBetween * 0.000621371) + "miles</div>";
+// txt = new TxtOverlay(inBetween, customTxt, "chicagoNY", map);
 
 
 

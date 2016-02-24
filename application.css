@@ -20,14 +20,58 @@ h1  {
   color: red;
 }
 
+.chicagoNY {
+  position: absolute;
+  font-family: sans-serif;
+  font-style: italic;
+  color: black;
+  font-size: 15px;
+  padding-top: 1%;
+}
 
-.customBox {
-      /*background: white;
-      border: 1px solid black;*/
-      position: absolute;
-      font-family: monospace;
-      color: blue;
-      font-size: 15px;
-      padding-top: 1%;
-    }
+.losAngelesSeattle {
+  position: absolute;
+  font-family: sans-serif;
+  font-style: italic;
+  color: black;
+  font-size: 15px;
+  padding-left: 1%;
+}
+
+.seattleChicago {
+  position: absolute;
+  font-family: sans-serif;
+  font-style: italic;
+  color: black;
+  font-size: 15px;
+  padding-top: 2%;
+}
+
+.nycDC {
+  position: absolute;
+  font-family: sans-serif;
+  font-style: italic;
+  color: black;
+  font-size: 15px;
+  padding-left: 0.75%;
+}
+
+.atlantaMiami {
+  position: absolute;
+  font-family: sans-serif;
+  font-style: italic;
+  color: black;
+  font-size: 15px;
+  padding-left: 2%;
+}
+
+.dallasMiami {
+  position: absolute;
+  font-family: sans-serif;
+  font-style: italic;
+  color: black;
+  font-size: 15px;
+  padding-top: 3%;
+}
+
 
