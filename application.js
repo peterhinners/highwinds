@@ -69,10 +69,143 @@ function initMap() {
 
 
 
+
+  var styles = [
+    {
+        "featureType": "landscape",
+        "stylers": [
+            {
+                "saturation": -100
+            },
+            {
+                "lightness": 65
+            },
+            {
+                "visibility": "on"
+            }
+        ]
+    },
+    {
+        "featureType": "poi",
+        "stylers": [
+            {
+                "saturation": -100
+            },
+            {
+                "lightness": 51
+            },
+            {
+                "visibility": "simplified"
+            }
+        ]
+    },
+    {
+        "featureType": "road.highway",
+        "stylers": [
+            {
+                "saturation": -100
+            },
+            {
+                "visibility": "simplified"
+            }
+        ]
+    },
+    {
+        "featureType": "road.arterial",
+        "stylers": [
+            {
+                "saturation": -100
+            },
+            {
+                "lightness": 30
+            },
+            {
+                "visibility": "on"
+            }
+        ]
+    },
+    {
+        "featureType": "road.local",
+        "stylers": [
+            {
+                "saturation": -100
+            },
+            {
+                "lightness": 40
+            },
+            {
+                "visibility": "on"
+            }
+        ]
+    },
+    {
+        "featureType": "transit",
+        "stylers": [
+            {
+                "saturation": -100
+            },
+            {
+                "visibility": "simplified"
+            }
+        ]
+    },
+    {
+        "featureType": "administrative.province",
+        "stylers": [
+            {
+                "visibility": "off"
+            }
+        ]
+    },
+    {
+        "featureType": "water",
+        "elementType": "labels",
+        "stylers": [
+            {
+                "visibility": "on"
+            },
+            {
+                "lightness": -25
+            },
+            {
+                "saturation": -100
+            }
+        ]
+    },
+    {
+        "featureType": "water",
+        "elementType": "geometry",
+        "stylers": [
+            {
+                "hue": "#ffff00"
+            },
+            {
+                "lightness": -25
+            },
+            {
+                "saturation": -97
+            }
+        ]
+    }
+];
+
+var styledMap = new google.maps.StyledMapType(styles,
+    {name: "Styled Map"});
+
+
+
   map = new google.maps.Map(document.getElementById('map'), {
     center: {lat: 36.55547456, lng: -95.664999},
-    zoom: 5
+    zoom: 5,
+    mapTypeControlOptions: {
+      mapTypeIds: [google.maps.MapTypeId.ROADMAP, 'map_style']
+    },
+    disableDefaultUI: true,
+    scrollwheel: false
   });
+
+  map.mapTypes.set('map_style', styledMap);
+  map.setMapTypeId('map_style');
 
   var newYorkMarker = new google.maps.Marker({
     position: {
@@ -155,8 +288,8 @@ function initMap() {
 
 var nyc = new google.maps.LatLng(40.740957, -74.002119);
 var chicago = new google.maps.LatLng(41.853895, -87.618449);
-var inBetween = google.maps.geometry.spherical.interpolate(nyc, chicago, 0.5);
-
+var inBetween = google.maps.geometry.spherical.interpolate(nyc, chicago, 0.65);
+var distanceBetween = google.maps.geometry.spherical.computeDistanceBetween(nyc, chicago);
 
 var marker = new google.maps.Marker({
   position: inBetween,
@@ -164,7 +297,7 @@ var marker = new google.maps.Marker({
   visible: false
 });
 
-customTxt = "<div>Blah blah</div>";
+customTxt = "<div>" + Math.round(distanceBetween * 0.000621371) + " miles</div>";
 txt = new TxtOverlay(inBetween, customTxt, "customBox", map);
 
 
