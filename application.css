@@ -19,3 +19,13 @@ h1  {
 h1  {
   color: red;
 }
+
+
+.customBox {
+      /*background: white;
+      border: 1px solid black;*/
+      position: absolute;
+      font-family: monospace;
+
+    }
+
