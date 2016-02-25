@@ -44,41 +44,97 @@
 
   <script src="application.js"></script>
 
-    <script async defer
+  <script async defer
       src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAT__AymaDYqLmALnKweZ1tacPJMwzWjMo&callback=initMap&libraries=geometry">
-    </script>
+  </script>
 
-      <script>
+  <script>
     function myFunction() {
-    document.body.scrollTop = document.documentElement.scrollTop = 0;
+
     var x = document.getElementById("mySelect").value;
     var y = document.getElementById("yoyoma").elements[0].value;
     document.getElementById("demo").innerHTML = y + " " + x;
     console.log(y + " " + x);
 
-    codeAddress(y);
+    geocodeAddress(y);
+
 
     }
 
 
 
-function codeAddress(address)
-{
-  geocoder.geocode( {address:address}, function(results, status)
-  {
-    if (status == google.maps.GeocoderStatus.OK)
+    function geocodeAddress(address)
     {
-      // map.setCenter(results[0].geometry.location);
-      var marker = new google.maps.Marker(
+      var client;
+      geocoder.geocode( {address:address}, function(results, status)
       {
-          map: map,
-          position: results[0].geometry.location
+        client = results[0].geometry.location;
+        // console.log(client.lat());
+        if (status == google.maps.GeocoderStatus.OK)
+        {
+          // map.setCenter(results[0].geometry.location);
+          var marker = new google.maps.Marker(
+          {
+              map: map,
+              position: results[0].geometry.location
+          });
+        } else {
+          alert('Geocode was not successful for the following reason: ' + status);
+       } findNearestPOP(client);
       });
-    } else {
-      alert('Geocode was not successful for the following reason: ' + status);
-   }
-  });
-}
+    }
+
+    function findNearestPOP(client){
+      // console.log(typeof client);
+      var clientLat = client.lat();
+      var clientLng = client.lng();
+      var pops = [
+        nyc,
+        chicago,
+        seattle,
+        dc,
+        atlanta,
+        dallas,
+        losAngeles,
+        miami
+      ];
+
+      var closest = [40075161, nyc];
+
+      for (var i = 0; i < pops.length; i++){
+        var distanceBetween = google.maps.geometry.spherical.computeDistanceBetween(client, pops[i]);
+        if (distanceBetween < closest[0]){
+          closest[0] = distanceBetween;
+          closest[1] = pops[i];
+        }
+      }
+
+
+      // console.log(closest);
+
+      var nearestPopLat = closest[1].lat();
+      var nearestPopLng = closest[1].lng();
+
+
+
+
+      var testLineCoordinates = [
+        {lat: clientLat, lng: clientLng},
+        {lat: nearestPopLat, lng: nearestPopLng}
+      ];
+
+      var testLine = new google.maps.Polyline({
+        path: testLineCoordinates,
+        geodesic: true,
+        strokeOpacity: 1,
+        strokeColor: '#FF0000',
+        map: map
+      });
+
+      // console.log(nyc);
+
+
+    }
 
 </script>
 
