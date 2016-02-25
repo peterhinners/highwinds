@@ -49,7 +49,22 @@
   </script>
 
   <script>
+
+    var lastPolyline;
+    var clientMarker;
+
+    function reset(line, marker) {
+      line.setMap(null);
+      marker.setMap(null);
+    }
+
+
+
     function myFunction() {
+
+     if (lastPolyline){
+      reset(lastPolyline, clientMarker);
+     }
 
     var x = document.getElementById("mySelect").value;
     var y = document.getElementById("yoyoma").elements[0].value;
@@ -68,19 +83,20 @@
       var client;
       geocoder.geocode( {address:address}, function(results, status)
       {
-        client = results[0].geometry.location;
         // console.log(client.lat());
         if (status == google.maps.GeocoderStatus.OK)
         {
           // map.setCenter(results[0].geometry.location);
-          var marker = new google.maps.Marker(
+          clientMarker = new google.maps.Marker(
           {
               map: map,
               position: results[0].geometry.location
           });
+          client = clientMarker.position;
+          findNearestPOP(client);
         } else {
           alert('Geocode was not successful for the following reason: ' + status);
-       } findNearestPOP(client);
+       }
       });
     }
 
@@ -99,7 +115,7 @@
         miami
       ];
 
-      var closest = [40075161, nyc];
+      var closest = [40075161, nyc]; // earth's circumference in meters, and random LatLng object
 
       for (var i = 0; i < pops.length; i++){
         var distanceBetween = google.maps.geometry.spherical.computeDistanceBetween(client, pops[i]);
@@ -123,7 +139,7 @@
         {lat: nearestPopLat, lng: nearestPopLng}
       ];
 
-      var testLine = new google.maps.Polyline({
+      lastPolyline = new google.maps.Polyline({
         path: testLineCoordinates,
         geodesic: true,
         strokeOpacity: 1,
