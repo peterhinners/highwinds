@@ -1,5 +1,15 @@
 var map;
+var nyc;
+var chicago;
+var seattle;
+var dc;
+var atlanta;
+var dallas;
+var losAngeles;
+var miami;
+
 function initMap() {
+
 
 
 
@@ -348,14 +358,14 @@ geocoder = new google.maps.Geocoder();
   });
 
 // setup LatLng Objects for all eight POPs
-var nyc = new google.maps.LatLng(40.740957, -74.002119);
-var chicago = new google.maps.LatLng(41.853895, -87.618449);
-var seattle = new google.maps.LatLng(47.614358, -122.338864);
-var dc = new google.maps.LatLng(39.016363, -77.459023);
-var atlanta = new google.maps.LatLng(33.755464, -84.391533);
-var dallas = new google.maps.LatLng(32.800340, -96.819499);
-var losAngeles = new google.maps.LatLng(34.047908, -118.255536);
-var miami = new google.maps.LatLng(25.782360, -80.193053);
+nyc = new google.maps.LatLng(40.740957, -74.002119);
+chicago = new google.maps.LatLng(41.853895, -87.618449);
+seattle = new google.maps.LatLng(47.614358, -122.338864);
+dc = new google.maps.LatLng(39.016363, -77.459023);
+atlanta = new google.maps.LatLng(33.755464, -84.391533);
+dallas = new google.maps.LatLng(32.800340, -96.819499);
+losAngeles = new google.maps.LatLng(34.047908, -118.255536);
+miami = new google.maps.LatLng(25.782360, -80.193053);
 
 
 // The nine pairs of networked POPs in an array, to facilitate iterating through them,
@@ -377,13 +387,14 @@ var networkPairs = [
 // tempted to have just hard coded the distances since they do not really ever change.
 
 for(var i = 0; i < networkPairs.length; i++){
-  var inBetween = google.maps.geometry.spherical.interpolate(networkPairs[i][0], networkPairs[i][1], networkPairs[i][2]);
+  var inBetweenPoint = google.maps.geometry.spherical.interpolate(networkPairs[i][0], networkPairs[i][1], networkPairs[i][2]);
   var distanceBetween = google.maps.geometry.spherical.computeDistanceBetween(networkPairs[i][0], networkPairs[i][1]);
   var customTxt = "<div>" + Math.round(distanceBetween * 0.000621371) + " miles</div>";
-  var txt = new TxtOverlay(inBetween, customTxt, networkPairs[i][3], map);
+  var txt = new TxtOverlay(inBetweenPoint, customTxt, networkPairs[i][3], map);
 }
 
-
+// var doubleCheck = google.maps.geometry.spherical.computeDistanceBetween(dallas, miami);
+// console.log(doubleCheck * 0.000621371);
 
 
 // Chicago / New York label
@@ -438,23 +449,23 @@ for(var i = 0; i < networkPairs.length; i++){
 
 
 
- function getDistanceFromLatLonInKm(lat1,lon1,lat2,lon2) {
-    var R = 6371; // Radius of the earth in km
-    var dLat = deg2rad(lat2-lat1);  // deg2rad below
-    var dLon = deg2rad(lon2-lon1);
-    var a =
-      Math.sin(dLat/2) * Math.sin(dLat/2) +
-      Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) *
-      Math.sin(dLon/2) * Math.sin(dLon/2)
-      ;
-    var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
-    var d = R * c; // Distance in km
-    return d * 0.621371;
- }
+ // function getDistanceFromLatLonInKm(lat1,lon1,lat2,lon2) {
+ //    var R = 6371; // Radius of the earth in km
+ //    var dLat = deg2rad(lat2-lat1);  // deg2rad below
+ //    var dLon = deg2rad(lon2-lon1);
+ //    var a =
+ //      Math.sin(dLat/2) * Math.sin(dLat/2) +
+ //      Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) *
+ //      Math.sin(dLon/2) * Math.sin(dLon/2)
+ //      ;
+ //    var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+ //    var d = R * c; // Distance in km
+ //    return d * 0.621371;
+ // }
 
-  function deg2rad(deg) {
-    return deg * (Math.PI/180)
-  }
+ //  function deg2rad(deg) {
+ //    return deg * (Math.PI/180)
+ //  }
 
 
 
