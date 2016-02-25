@@ -2,6 +2,8 @@ var map;
 function initMap() {
 
 
+
+
   function TxtOverlay(pos, txt, cls, map) {
 
       // Now initialize all properties.
@@ -192,20 +194,26 @@ function initMap() {
 var styledMap = new google.maps.StyledMapType(styles,
     {name: "Styled Map"});
 
-
+geocoder = new google.maps.Geocoder();
 
   map = new google.maps.Map(document.getElementById('map'), {
-    center: {lat: 36.55547456, lng: -95.664999},
+    center: {lat: 38.55547456, lng: -95.664999},
     zoom: 5,
     mapTypeControlOptions: {
       mapTypeIds: [google.maps.MapTypeId.ROADMAP, 'map_style']
     },
     disableDefaultUI: true,
-    scrollwheel: false
+    scrollwheel: false,
+    draggable: false,
+    panControl: false
   });
+
 
   map.mapTypes.set('map_style', styledMap);
   map.setMapTypeId('map_style');
+
+
+
 
   var newYorkMarker = new google.maps.Marker({
     position: {
@@ -339,6 +347,7 @@ var styledMap = new google.maps.StyledMapType(styles,
     map: map
   });
 
+// setup LatLng Objects for all eight POPs
 var nyc = new google.maps.LatLng(40.740957, -74.002119);
 var chicago = new google.maps.LatLng(41.853895, -87.618449);
 var seattle = new google.maps.LatLng(47.614358, -122.338864);
@@ -349,8 +358,9 @@ var losAngeles = new google.maps.LatLng(34.047908, -118.255536);
 var miami = new google.maps.LatLng(25.782360, -80.193053);
 
 
-// The nine paired POPs, plus offset & unique class name
-var labelPairs = [
+// The nine pairs of networked POPs in an array, to facilitate iterating through them,
+// plus offset & unique class name
+var networkPairs = [
   [nyc, dc, 0.4, "nycDC"],
   [dc, atlanta, 0.4, "chicagoNY"],
   [atlanta, miami, 0.2, "atlantaMiami"],
@@ -362,11 +372,15 @@ var labelPairs = [
   [chicago, nyc, 0.35, "chicagoNY"]
 ];
 
-for(var i = 0; i < labelPairs.length; i++){
-  var inBetween = google.maps.geometry.spherical.interpolate(labelPairs[i][0], labelPairs[i][1], labelPairs[i][2]);
-  var distanceBetween = google.maps.geometry.spherical.computeDistanceBetween(labelPairs[i][0], labelPairs[i][1]);
+// iterate through POP pairs to find the midpoint distance between them, and print out their
+// distance apart from each other at that midpoint with google maps custom OverLay. Was
+// tempted to have just hard coded the distances since they do not really ever change.
+
+for(var i = 0; i < networkPairs.length; i++){
+  var inBetween = google.maps.geometry.spherical.interpolate(networkPairs[i][0], networkPairs[i][1], networkPairs[i][2]);
+  var distanceBetween = google.maps.geometry.spherical.computeDistanceBetween(networkPairs[i][0], networkPairs[i][1]);
   var customTxt = "<div>" + Math.round(distanceBetween * 0.000621371) + " miles</div>";
-  var txt = new TxtOverlay(inBetween, customTxt, labelPairs[i][3], map);
+  var txt = new TxtOverlay(inBetween, customTxt, networkPairs[i][3], map);
 }
 
 
