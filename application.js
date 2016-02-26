@@ -215,7 +215,8 @@ geocoder = new google.maps.Geocoder();
     disableDefaultUI: true,
     scrollwheel: false,
     draggable: false,
-    panControl: false
+    panControl: false,
+    disableDoubleClickZoom: true
   });
 
 

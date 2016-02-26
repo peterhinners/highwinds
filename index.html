@@ -20,9 +20,14 @@
 
       <select id="mySelect">
       <option value="" disabled selected>Server Address
-      <option value="BMW">BMW
-      <option value="Mercedes">Mercedes
-      <option value="Volvo">Volvo
+      <option value="nyc">Switch and Data - 111 8th Ave, New York, NY 10011
+      <option value="dc">Equinix, Cage 1010 - 21715 Filigree Ct., Ashburn VA 20147
+      <option value="atlanta">UseNetServer Fourth Floor - 56 Marietta St., Atlanta, GA 30303
+      <option value="dallas">Dallas,"1950 Stemmons Frwy"
+      <option value="losAngeles">One Wilshire Bldg., 11th Fl, Cage C1111 - 624 S. Grand Ave, Los Angeles, CA 90017
+      <option value="chicago">Equinix - 350 E Cermak Rd, Chicago, IL 60616
+      <option value="seattle">2001 Sixth Ave, Seattle WA, 98121
+      <option value="miami">50 Northeast 9th Street, Miami, FL
     </select>
 
   <input type="submit" value="Optimal Route">
@@ -41,7 +46,7 @@
    <div id="map"></div>
 
 
-
+  <script src="graph.js"></script>
   <script src="application.js"></script>
 
   <script async defer
@@ -52,6 +57,7 @@
 
     var lastPolyline;
     var clientMarker;
+     var serverLocation;
 
     function reset(line, marker) {
       line.setMap(null);
@@ -62,16 +68,24 @@
 
     function myFunction() {
 
+
+
      if (lastPolyline){
       reset(lastPolyline, clientMarker);
      }
 
-    var x = document.getElementById("mySelect").value;
+    serverLocation = document.getElementById("mySelect").value;
     var y = document.getElementById("yoyoma").elements[0].value;
-    document.getElementById("demo").innerHTML = y + " " + x;
-    console.log(y + " " + x);
+    document.getElementById("demo").innerHTML = y + " " + serverLocation;
+    console.log(y + " " + serverLocation);
+    if (y === ""){
+      alert("Please enter in client address");
+      } else if (serverLocation === "") {
+      alert("Please choose a server location.");
+      } else {
+        geocodeAddress(y);
+      }
 
-    geocodeAddress(y);
 
 
     }
@@ -95,7 +109,7 @@
           client = clientMarker.position;
           findNearestPOP(client);
         } else {
-          alert('Geocode was not successful for the following reason: ' + status);
+          alert('Google Maps Geocoder could not find your address, please try again. ' + status);
        }
       });
     }
@@ -115,7 +129,20 @@
         miami
       ];
 
-      var closest = [40075161, nyc]; // earth's circumference in meters, and random LatLng object
+      var popStringHash = {
+        nyc: "nyc",
+        chicago: "chicago",
+        seattle: "seattle",
+        dc: "dc",
+        atlanta: "atlanta",
+        dallas: "dallas",
+        losAngeles: "losAngeles",
+        miami: "miami"
+      };
+
+      console.log(popStringHash.nyc);
+
+      var closest = [40075161, ""]; // earth's circumference in meters, and placeholder
 
       for (var i = 0; i < pops.length; i++){
         var distanceBetween = google.maps.geometry.spherical.computeDistanceBetween(client, pops[i]);
@@ -125,19 +152,75 @@
         }
       }
 
+      // var funny = popStringHash.closest[1];
 
       // console.log(closest);
 
       var nearestPopLat = closest[1].lat();
       var nearestPopLng = closest[1].lng();
+      // var closestPopToString = JSON.stringify(closest[1]);
+      console.log(closest[1]);
+
+
+      var hog = "miami";
+      console.log(serverLocation);
+
+
+  switch (closest[1].lat()) {
+    case 40.740957:
+        var startingPoint = "nyc";
+        break;
+    case 39.016363:
+        var startingPoint = "dc";
+        break;
+    case 33.755464:
+        var startingPoint = "atlanta";
+        break;
+    case 32.800340:
+        var startingPoint = "dallas";
+        break;
+    case 34.047908:
+        var startingPoint = "losAngeles";
+        break;
+    case 41.853895:
+        var startingPoint = "chicago";
+        break;
+    case 47.614358:
+        var startingPoint = "seattle";
+        break;
+    case 25.782360:
+        var startingPoint = "miami";
+        break;
+  }
 
 
 
 
-      var testLineCoordinates = [
-        {lat: clientLat, lng: clientLng},
-        {lat: nearestPopLat, lng: nearestPopLng}
-      ];
+
+      var dijkstraMap = {nyc:{dc:219,chicago:711},chicago:{seattle:1736,nyc:711},seattle:{chicago:1736,losAngeles:962},dc:{nyc:219,atlanta:530},atlanta:{dc:530,miami:606,dallas:721},dallas:{atlanta:721,miami:1112,losAngeles:1238},losAngeles:{dallas:1238,seattle:962},miami:{atlanta:606,dallas:1112}};
+      var graph = new Graph(dijkstraMap);
+      var result = (graph.findShortestPath(startingPoint, serverLocation));
+      var objectifiedResult = result.map(function(str){
+        return eval("("+str+")");
+      })
+
+      // var str = result[0];
+      // var obj=eval("("+str+")");
+      console.log(result);
+
+      // var holdingArray = [{lat: nearestPopLat, lng: nearestPopLng}];
+      var holdingArray = [{lat: clientLat, lng: clientLng}];
+      for (var i = 0; i < objectifiedResult.length; i++){
+        holdingArray.push({lat: objectifiedResult[i].lat(), lng: objectifiedResult[i].lng()});
+      }
+
+      var testLineCoordinates = holdingArray;
+
+
+      // var testLineCoordinates = [
+      //   {lat: clientLat, lng: clientLng},
+      //   {lat: nearestPopLat, lng: nearestPopLng}
+      // ];
 
       lastPolyline = new google.maps.Polyline({
         path: testLineCoordinates,
@@ -149,6 +232,10 @@
 
       // console.log(nyc);
 
+
+    }
+
+    function findOptimalRoute(){
 
     }
 
