@@ -7,206 +7,51 @@ var atlanta;
 var dallas;
 var losAngeles;
 var miami;
+var pops;
+var optimalPolyline;
+var clientMarker;
+var serverLocation;
 
 function initMap() {
 
-
-
-
-
   function TxtOverlay(pos, txt, cls, map) {
+    this.pos = pos;
+    this.txt_ = txt;
+    this.cls_ = cls;
+    this.map_ = map;
+    this.div_ = null;
+    this.setMap(map);
+  }
 
-      // Now initialize all properties.
-      this.pos = pos;
-      this.txt_ = txt;
-      this.cls_ = cls;
-      this.map_ = map;
+  TxtOverlay.prototype = new google.maps.OverlayView();
 
-      // We define a property to hold the image's
-      // div. We'll actually create this div
-      // upon receipt of the add() method so we'll
-      // leave it null for now.
-      this.div_ = null;
+  TxtOverlay.prototype.onAdd = function() {
+    var div = document.createElement('DIV');
+    div.className = this.cls_;
+    div.innerHTML = this.txt_;
+    this.div_ = div;
+    var overlayProjection = this.getProjection();
+    var position = overlayProjection.fromLatLngToDivPixel(this.pos);
+    div.style.left = position.x + 'px';
+    div.style.top = position.y + 'px';
+    var panes = this.getPanes();
+    panes.floatPane.appendChild(div);
+  }
 
-      // Explicitly call setMap() on this overlay
-      this.setMap(map);
-    }
-
-    TxtOverlay.prototype = new google.maps.OverlayView();
-
-
-
-    TxtOverlay.prototype.onAdd = function() {
-
-      // Note: an overlay's receipt of onAdd() indicates that
-      // the map's panes are now available for attaching
-      // the overlay to the map via the DOM.
-
-      // Create the DIV and set some basic attributes.
-      var div = document.createElement('DIV');
-      div.className = this.cls_;
-
-      div.innerHTML = this.txt_;
-
-      // Set the overlay's div_ property to this DIV
-      this.div_ = div;
+  TxtOverlay.prototype.draw = function() {
       var overlayProjection = this.getProjection();
       var position = overlayProjection.fromLatLngToDivPixel(this.pos);
+      var div = this.div_;
       div.style.left = position.x + 'px';
       div.style.top = position.y + 'px';
-      // We add an overlay to a map via one of the map's panes.
+  }
 
-      var panes = this.getPanes();
-      panes.floatPane.appendChild(div);
-    }
-    TxtOverlay.prototype.draw = function() {
+  var styledMap = new google.maps.StyledMapType(styles,
+      {name: "Styled Map"});
 
+  geocoder = new google.maps.Geocoder();
 
-        var overlayProjection = this.getProjection();
-
-        // Retrieve the southwest and northeast coordinates of this overlay
-        // in latlngs and convert them to pixels coordinates.
-        // We'll use these coordinates to resize the DIV.
-        var position = overlayProjection.fromLatLngToDivPixel(this.pos);
-
-
-        var div = this.div_;
-        div.style.left = position.x + 'px';
-        div.style.top = position.y + 'px';
-
-
-
-      }
-
-
-
-
-
-  var styles = [
-    {
-        "featureType": "landscape",
-        "stylers": [
-            {
-                "saturation": -100
-            },
-            {
-                "lightness": 65
-            },
-            {
-                "visibility": "on"
-            }
-        ]
-    },
-    {
-        "featureType": "poi",
-        "stylers": [
-            {
-                "saturation": -100
-            },
-            {
-                "lightness": 51
-            },
-            {
-                "visibility": "simplified"
-            }
-        ]
-    },
-    {
-        "featureType": "road.highway",
-        "stylers": [
-            {
-                "saturation": -100
-            },
-            {
-                "visibility": "simplified"
-            }
-        ]
-    },
-    {
-        "featureType": "road.arterial",
-        "stylers": [
-            {
-                "saturation": -100
-            },
-            {
-                "lightness": 30
-            },
-            {
-                "visibility": "on"
-            }
-        ]
-    },
-    {
-        "featureType": "road.local",
-        "stylers": [
-            {
-                "saturation": -100
-            },
-            {
-                "lightness": 40
-            },
-            {
-                "visibility": "on"
-            }
-        ]
-    },
-    {
-        "featureType": "transit",
-        "stylers": [
-            {
-                "saturation": -100
-            },
-            {
-                "visibility": "simplified"
-            }
-        ]
-    },
-    {
-        "featureType": "administrative.province",
-        "stylers": [
-            {
-                "visibility": "off"
-            }
-        ]
-    },
-    {
-        "featureType": "water",
-        "elementType": "labels",
-        "stylers": [
-            {
-                "visibility": "on"
-            },
-            {
-                "lightness": -25
-            },
-            {
-                "saturation": -100
-            }
-        ]
-    },
-    {
-        "featureType": "water",
-        "elementType": "geometry",
-        "stylers": [
-            {
-                "hue": "#ffff00"
-            },
-            {
-                "lightness": -25
-            },
-            {
-                "saturation": -97
-            }
-        ]
-    }
-];
-
-var styledMap = new google.maps.StyledMapType(styles,
-    {name: "Styled Map"});
-
-geocoder = new google.maps.Geocoder();
-
-var mapOptions = {
+  var mapOptions = {
     center: {lat: 38.55547456, lng: -95.664999},
     zoom: 5,
     mapTypeControlOptions: {
@@ -220,12 +65,8 @@ var mapOptions = {
   };
 
   map = new google.maps.Map(document.getElementById('map'), mapOptions);
-
-
   map.mapTypes.set('map_style', styledMap);
   map.setMapTypeId('map_style');
-
-
 
   // setup LatLng Objects for all eight POPs
   nyc = new google.maps.LatLng(40.740957, -74.002119);
@@ -238,13 +79,13 @@ var mapOptions = {
   miami = new google.maps.LatLng(25.782360, -80.193053);
 
   // setup POP markers
-  var latLngArray = [nyc, chicago, seattle, dc, atlanta, dallas, losAngeles, miami];
+  pops = [nyc, chicago, seattle, dc, atlanta, dallas, losAngeles, miami];
 
-  for (var i = 0; i < latLngArray.length; i++){
+  for (var i = 0; i < pops.length; i++){
     new google.maps.Marker({
     position: {
-      lat: latLngArray[i].lat(),
-      lng: latLngArray[i].lng()
+      lat: pops[i].lat(),
+      lng: pops[i].lng()
     },
     map: map
     });
@@ -272,27 +113,21 @@ var mapOptions = {
     map: map
   });
 
+  // This section is for calculating and displaying the distance text between POPs...
+  // The offsets and class names are for fine-tuning the distance text.
+  // Another option is to use images for the static distance text.
 
-
-
-
-// The nine pairs of networked POPs in an array, to facilitate iterating through them,
-// plus offset & unique class name
-var networkPairs = [
-  [nyc, dc, 0.4, "distance nycDC"],
-  [dc, atlanta, 0.4, "distance chicagoNY"],
-  [atlanta, miami, 0.2, "distance atlantaMiami"],
-  [atlanta, dallas, 0.5, "distance chicagoNY"],
-  [dallas, miami, 0.3, "distance dallasMiami"],
-  [dallas, losAngeles, 0.5, "distance chicagoNY"],
-  [losAngeles, seattle, 0.6, "distance losAngelesSeattle"],
-  [seattle, chicago, 0.5, "distance seattleChicago"],
-  [chicago, nyc, 0.35, "distance chicagoNY"]
-];
-
-// iterate through POP pairs to find the midpoint distance between them, and print out their
-// distance apart from each other at that midpoint with google maps custom OverLay. Was
-// tempted to have just hard coded the distances since they should not really ever change.
+  var networkPairs = [
+    [nyc, dc, 0.4, "distance nycDC"],
+    [dc, atlanta, 0.4, "distance"],
+    [atlanta, miami, 0.2, "distance atlantaMiami"],
+    [atlanta, dallas, 0.5, "distance"],
+    [dallas, miami, 0.3, "distance dallasMiami"],
+    [dallas, losAngeles, 0.5, "distance"],
+    [losAngeles, seattle, 0.6, "distance losAngelesSeattle"],
+    [seattle, chicago, 0.5, "distance seattleChicago"],
+    [chicago, nyc, 0.35, "distance"]
+  ];
 
   for(var i = 0; i < networkPairs.length; i++){
     var inBetweenPoint = google.maps.geometry.spherical.interpolate(networkPairs[i][0], networkPairs[i][1], networkPairs[i][2]);
@@ -300,11 +135,104 @@ var networkPairs = [
     var customTxt = "<div>" + Math.round(distanceBetween * 0.000621371) + " miles</div>";
     var txt = new TxtOverlay(inBetweenPoint, customTxt, networkPairs[i][3], map);
   }
-
-
-
-
-
 }
+
+function clientInput() {
+
+  function reset(line, marker) {
+    line.setMap(null);
+    marker.setMap(null);
+  }
+
+  if (optimalPolyline){
+   reset(optimalPolyline, clientMarker);
+  }
+
+  serverLocation = document.getElementById("dropDown").value;
+  var clientAddress = document.getElementById("form-field").elements[0].value;
+
+  if (clientAddress === ""){
+    alert("Please enter in client address");
+  } else if (serverLocation === "") {
+    alert("Please choose a server location.");
+  } else {
+    geocodeAddress(clientAddress);
+  }
+}
+
+function geocodeAddress(address){
+  var client;
+  geocoder.geocode( {address:address}, function(results, status){
+    if (status == google.maps.GeocoderStatus.OK){
+      clientMarker = new google.maps.Marker({
+          map: map,
+          position: results[0].geometry.location
+      });
+      client = clientMarker.position;
+      optimalRoute(client);
+    } else {
+      alert('Google Maps Geocoder could not find your address, please try again. ' + status);
+    }
+  });
+}
+
+function optimalRoute(client){
+  var closest = [40075161, ""]; // farthest possible distance from client (earth's circumference in meters), and placeholder
+  for (var i = 0; i < pops.length; i++){
+    var distanceBetween = google.maps.geometry.spherical.computeDistanceBetween(client, pops[i]);
+    if (distanceBetween < closest[0]){
+      closest[0] = distanceBetween;
+      closest[1] = pops[i];
+    }
+  }
+
+  switch (closest[1]) {
+    case nyc:
+        var startingPoint = "nyc";
+        break;
+    case dc:
+        var startingPoint = "dc";
+        break;
+    case atlanta:
+        var startingPoint = "atlanta";
+        break;
+    case dallas:
+        var startingPoint = "dallas";
+        break;
+    case losAngeles:
+        var startingPoint = "losAngeles";
+        break;
+    case chicago:
+        var startingPoint = "chicago";
+        break;
+    case seattle:
+        var startingPoint = "seattle";
+        break;
+    case miami:
+        var startingPoint = "miami";
+        break;
+  }
+
+  var dijkstraMap = {nyc:{dc:219,chicago:711},chicago:{seattle:1736,nyc:711},seattle:{chicago:1736,losAngeles:962},dc:{nyc:219,atlanta:530},atlanta:{dc:530,miami:606,dallas:721},dallas:{atlanta:721,miami:1112,losAngeles:1238},losAngeles:{dallas:1238,seattle:962},miami:{atlanta:606,dallas:1112}};
+  var graph = new Graph(dijkstraMap);
+  var result = (graph.findShortestPath(startingPoint, serverLocation));
+  var objectifiedResult = result.map(function(str){
+    return eval("("+str+")");
+  })
+
+  var optimalPath = [{lat: client.lat(), lng: client.lng()}];
+  for (var i = 0; i < objectifiedResult.length; i++){
+    optimalPath.push({lat: objectifiedResult[i].lat(), lng: objectifiedResult[i].lng()});
+  }
+
+  optimalPolyline = new google.maps.Polyline({
+    path: optimalPath,
+    geodesic: true,
+    strokeOpacity: 1,
+    strokeColor: '#FF0000',
+    map: map
+  });
+}
+
 
 // google.maps.event.addDomListener(window, 'load', initMap);
