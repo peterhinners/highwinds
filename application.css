@@ -9,19 +9,11 @@ body {
   overflow:hidden;
 }
 
-h1  {
-  color: red;
-}
-
 #map {
   height: 100%;
 }
 
-h1  {
-  color: red;
-}
-
-.chicagoNY {
+.distance {
   position: absolute;
   font-family: sans-serif;
   font-style: italic;
@@ -31,47 +23,22 @@ h1  {
 }
 
 .losAngelesSeattle {
-  position: absolute;
-  font-family: sans-serif;
-  font-style: italic;
-  color: black;
-  font-size: 15px;
   padding-left: 1%;
 }
 
 .seattleChicago {
-  position: absolute;
-  font-family: sans-serif;
-  font-style: italic;
-  color: black;
-  font-size: 15px;
   padding-top: 2%;
 }
 
 .nycDC {
-  position: absolute;
-  font-family: sans-serif;
-  font-style: italic;
-  color: black;
-  font-size: 15px;
   padding-left: 0.75%;
 }
 
 .atlantaMiami {
-  position: absolute;
-  font-family: sans-serif;
-  font-style: italic;
-  color: black;
-  font-size: 15px;
   padding-left: 2%;
 }
 
 .dallasMiami {
-  position: absolute;
-  font-family: sans-serif;
-  font-style: italic;
-  color: black;
-  font-size: 15px;
   padding-top: 3%;
 }
 
@@ -80,9 +47,7 @@ h1  {
   display: inline-block;
 }
 
-#demo {
-  display: inline-block;
-}
+
 
 
 
