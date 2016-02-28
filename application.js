@@ -1,12 +1,14 @@
-var map;
-var nyc;
-var chicago;
-var seattle;
-var dc;
-var atlanta;
-var dallas;
-var losAngeles;
-var miami;
+var Library = {};
+
+// var map;
+// var nyc;
+// var chicago;
+// var seattle;
+// var dc;
+// var atlanta;
+// var dallas;
+// var losAngeles;
+// var miami;
 var pops;
 var optimalPolyline;
 var clientMarker;
@@ -69,17 +71,17 @@ function initMap() {
   map.setMapTypeId('map_style');
 
   // setup LatLng Objects for all eight POPs
-  nyc = new google.maps.LatLng(40.740957, -74.002119);
-  chicago = new google.maps.LatLng(41.853895, -87.618449);
-  seattle = new google.maps.LatLng(47.614358, -122.338864);
-  dc = new google.maps.LatLng(39.016363, -77.459023);
-  atlanta = new google.maps.LatLng(33.755464, -84.391533);
-  dallas = new google.maps.LatLng(32.800340, -96.819499);
-  losAngeles = new google.maps.LatLng(34.047908, -118.255536);
-  miami = new google.maps.LatLng(25.782360, -80.193053);
+  Library.nyc = new google.maps.LatLng(40.740957, -74.002119);
+  Library.chicago = new google.maps.LatLng(41.853895, -87.618449);
+  Library.seattle = new google.maps.LatLng(47.614358, -122.338864);
+  Library.dc = new google.maps.LatLng(39.016363, -77.459023);
+  Library.atlanta = new google.maps.LatLng(33.755464, -84.391533);
+  Library.dallas = new google.maps.LatLng(32.800340, -96.819499);
+  Library.losAngeles = new google.maps.LatLng(34.047908, -118.255536);
+  Library.miami = new google.maps.LatLng(25.782360, -80.193053);
 
   // setup POP markers
-  pops = [nyc, chicago, seattle, dc, atlanta, dallas, losAngeles, miami];
+  pops = [Library.nyc, Library.chicago, Library.seattle, Library.dc, Library.atlanta, Library.dallas, Library.losAngeles, Library.miami];
 
   for (var i = 0; i < pops.length; i++){
     new google.maps.Marker({
@@ -92,7 +94,7 @@ function initMap() {
   }
 
   // setup network connection lines, and use icon to create dotted lines
-  var networkConnectionArray = [atlanta, dallas, losAngeles, seattle, chicago, nyc, dc, atlanta, miami, dallas];
+  var networkConnectionArray = [Library.atlanta, Library.dallas, Library.losAngeles, Library.seattle, Library.chicago, Library.nyc, Library.dc, Library.atlanta, Library.miami, Library.dallas];
 
   var lineSymbol = {
     path: 'M 0,-1 0,1',
@@ -118,15 +120,15 @@ function initMap() {
   // Another option is to use images for the static distance text.
 
   var networkPairs = [
-    [nyc, dc, 0.4, "distance nycDC"],
-    [dc, atlanta, 0.4, "distance"],
-    [atlanta, miami, 0.2, "distance atlantaMiami"],
-    [atlanta, dallas, 0.5, "distance"],
-    [dallas, miami, 0.3, "distance dallasMiami"],
-    [dallas, losAngeles, 0.5, "distance"],
-    [losAngeles, seattle, 0.6, "distance losAngelesSeattle"],
-    [seattle, chicago, 0.5, "distance seattleChicago"],
-    [chicago, nyc, 0.35, "distance"]
+    [Library.nyc, Library.dc, 0.4, "distance nycDC"],
+    [Library.dc, Library.atlanta, 0.4, "distance"],
+    [Library.atlanta, Library.miami, 0.2, "distance atlantaMiami"],
+    [Library.atlanta, Library.dallas, 0.5, "distance"],
+    [Library.dallas, Library.miami, 0.3, "distance dallasMiami"],
+    [Library.dallas, Library.losAngeles, 0.5, "distance"],
+    [Library.losAngeles, Library.seattle, 0.6, "distance losAngelesSeattle"],
+    [Library.seattle, Library.chicago, 0.5, "distance seattleChicago"],
+    [Library.chicago, Library.nyc, 0.35, "distance"]
   ];
 
   for(var i = 0; i < networkPairs.length; i++){
@@ -177,52 +179,46 @@ function geocodeAddress(address){
 }
 
 function optimalRoute(client){
-  var closest = [40075161, ""]; // farthest possible distance from client (earth's circumference in meters), and placeholder
+  var closestPOP = [40075161, ""]; // farthest possible distance from client (earth's circumference in meters), and placeholder
   for (var i = 0; i < pops.length; i++){
     var distanceBetween = google.maps.geometry.spherical.computeDistanceBetween(client, pops[i]);
-    if (distanceBetween < closest[0]){
-      closest[0] = distanceBetween;
-      closest[1] = pops[i];
+    if (distanceBetween < closestPOP[0]){
+      closestPOP[0] = distanceBetween;
+      closestPOP[1] = pops[i];
     }
   }
 
-  switch (closest[1]) {
-    case nyc:
-        var startingPoint = "nyc";
-        break;
-    case dc:
-        var startingPoint = "dc";
-        break;
-    case atlanta:
-        var startingPoint = "atlanta";
-        break;
-    case dallas:
-        var startingPoint = "dallas";
-        break;
-    case losAngeles:
-        var startingPoint = "losAngeles";
-        break;
-    case chicago:
-        var startingPoint = "chicago";
-        break;
-    case seattle:
-        var startingPoint = "seattle";
-        break;
-    case miami:
-        var startingPoint = "miami";
-        break;
+  var hashTable = {
+    "nyc": Library.nyc,
+    "dc": Library.dc,
+    "atlanta": Library.atlanta,
+    "dallas": Library.dallas,
+    "losAngeles": Library.losAngeles,
+    "chicago": Library.chicago,
+    "seattle": Library.seattle,
+    "miami": Library.miami
+  };
+
+  var startingPoint = Object.keys(hashTable).filter(function(key){
+    return hashTable[key] === closestPOP[1];
+  })[0];
+
+  function dijkstra(startingPoint, serverLocation){
+    var dijkstraMap = {nyc:{dc:219,chicago:711},chicago:{seattle:1736,nyc:711},seattle:{chicago:1736,losAngeles:962},dc:{nyc:219,atlanta:530},atlanta:{dc:530,miami:606,dallas:721},dallas:{atlanta:721,miami:1112,losAngeles:1238},losAngeles:{dallas:1238,seattle:962},miami:{atlanta:606,dallas:1112}};
+    var graph = new Graph(dijkstraMap);
+    var result = (graph.findShortestPath(startingPoint, serverLocation));
+    return result;
   }
 
-  var dijkstraMap = {nyc:{dc:219,chicago:711},chicago:{seattle:1736,nyc:711},seattle:{chicago:1736,losAngeles:962},dc:{nyc:219,atlanta:530},atlanta:{dc:530,miami:606,dallas:721},dallas:{atlanta:721,miami:1112,losAngeles:1238},losAngeles:{dallas:1238,seattle:962},miami:{atlanta:606,dallas:1112}};
-  var graph = new Graph(dijkstraMap);
-  var result = (graph.findShortestPath(startingPoint, serverLocation));
-  var objectifiedResult = result.map(function(str){
-    return eval("("+str+")");
-  })
+  var stringifiedArray = dijkstra(startingPoint, serverLocation);
+
+  var objectifiedArray = stringifiedArray.map(function(result) {
+    return hashTable[result];
+  });
 
   var optimalPath = [{lat: client.lat(), lng: client.lng()}];
-  for (var i = 0; i < objectifiedResult.length; i++){
-    optimalPath.push({lat: objectifiedResult[i].lat(), lng: objectifiedResult[i].lng()});
+  for (var i = 0; i < objectifiedArray.length; i++){
+    optimalPath.push({lat: objectifiedArray[i].lat(), lng: objectifiedArray[i].lng()});
   }
 
   optimalPolyline = new google.maps.Polyline({
