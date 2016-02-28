@@ -1,6 +1,6 @@
 
 // Dijkstra shortest path algorithm
-var Graph = (function (undefined) {
+Library.Graph = (function (undefined) {
   var extractKeys = function (obj) {
     var keys = [], key;
     for (key in obj) {
@@ -119,7 +119,7 @@ var Graph = (function (undefined) {
 })();
 
 // Google map style options
-var styles = [
+Library.styles = [
   {
       "featureType": "landscape",
       "stylers": [

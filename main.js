@@ -1,21 +1,9 @@
 var Library = {};
 
-// var map;
-// var nyc;
-// var chicago;
-// var seattle;
-// var dc;
-// var atlanta;
-// var dallas;
-// var losAngeles;
-// var miami;
-var pops;
-var optimalPolyline;
-var clientMarker;
-var serverLocation;
-
 function initMap() {
-
+  var i, max;
+  // Google Maps custom text overlay code to enable writing of distance text on map;
+  // An alternative is to use images and call those with an icon property
   function TxtOverlay(pos, txt, cls, map) {
     this.pos = pos;
     this.txt_ = txt;
@@ -48,10 +36,10 @@ function initMap() {
       div.style.top = position.y + 'px';
   }
 
-  var styledMap = new google.maps.StyledMapType(styles,
+  var styledMap = new google.maps.StyledMapType(Library.styles,
       {name: "Styled Map"});
 
-  geocoder = new google.maps.Geocoder();
+  Library.geocoder = new google.maps.Geocoder();
 
   var mapOptions = {
     center: {lat: 38.55547456, lng: -95.664999},
@@ -66,9 +54,9 @@ function initMap() {
     disableDoubleClickZoom: true
   };
 
-  map = new google.maps.Map(document.getElementById('map'), mapOptions);
-  map.mapTypes.set('map_style', styledMap);
-  map.setMapTypeId('map_style');
+  Library.map = new google.maps.Map(document.getElementById('map'), mapOptions);
+  Library.map.mapTypes.set('map_style', styledMap);
+  Library.map.setMapTypeId('map_style');
 
   // setup LatLng Objects for all eight POPs
   Library.nyc = new google.maps.LatLng(40.740957, -74.002119);
@@ -81,15 +69,15 @@ function initMap() {
   Library.miami = new google.maps.LatLng(25.782360, -80.193053);
 
   // setup POP markers
-  pops = [Library.nyc, Library.chicago, Library.seattle, Library.dc, Library.atlanta, Library.dallas, Library.losAngeles, Library.miami];
+  Library.pops = [Library.nyc, Library.chicago, Library.seattle, Library.dc, Library.atlanta, Library.dallas, Library.losAngeles, Library.miami];
 
-  for (var i = 0; i < pops.length; i++){
+  for (i = 0, max = Library.pops.length; i < max; i++){
     new google.maps.Marker({
     position: {
-      lat: pops[i].lat(),
-      lng: pops[i].lng()
+      lat: Library.pops[i].lat(),
+      lng: Library.pops[i].lng()
     },
-    map: map
+    map: Library.map
     });
   }
 
@@ -112,11 +100,11 @@ function initMap() {
       offset: '0',
       repeat: '20px'
     }],
-    map: map
+    map: Library.map
   });
 
   // This section is for calculating and displaying the distance text between POPs...
-  // The offsets and class names are for fine-tuning the distance text.
+  // The offsets and class names are for fine-tuning the distance text placement.
   // Another option is to use images for the static distance text.
 
   var networkPairs = [
@@ -131,11 +119,12 @@ function initMap() {
     [Library.chicago, Library.nyc, 0.35, "distance"]
   ];
 
-  for(var i = 0; i < networkPairs.length; i++){
+
+  for(i = 0, max = networkPairs.length; i < max; i++){
     var inBetweenPoint = google.maps.geometry.spherical.interpolate(networkPairs[i][0], networkPairs[i][1], networkPairs[i][2]);
     var distanceBetween = google.maps.geometry.spherical.computeDistanceBetween(networkPairs[i][0], networkPairs[i][1]);
     var customTxt = "<div>" + Math.round(distanceBetween * 0.000621371) + " miles</div>";
-    var txt = new TxtOverlay(inBetweenPoint, customTxt, networkPairs[i][3], map);
+    var txt = new TxtOverlay(inBetweenPoint, customTxt, networkPairs[i][3], Library.map);
   }
 }
 
@@ -146,17 +135,17 @@ function clientInput() {
     marker.setMap(null);
   }
 
-  if (optimalPolyline){
-   reset(optimalPolyline, clientMarker);
+  if (Library.optimalPolyline){
+   reset(Library.optimalPolyline, Library.clientMarker);
   }
 
-  serverLocation = document.getElementById("dropDown").value;
+  Library.serverLocation = document.getElementById("dropDown").value;
   var clientAddress = document.getElementById("form-field").elements[0].value;
 
   if (clientAddress === ""){
     alert("Please enter in client address");
-  } else if (serverLocation === "") {
-    alert("Please choose a server location.");
+  } else if (Library.serverLocation === "") {
+    alert("Please choose a server location");
   } else {
     geocodeAddress(clientAddress);
   }
@@ -164,13 +153,13 @@ function clientInput() {
 
 function geocodeAddress(address){
   var client;
-  geocoder.geocode( {address:address}, function(results, status){
+  Library.geocoder.geocode( {address:address}, function(results, status){
     if (status == google.maps.GeocoderStatus.OK){
-      clientMarker = new google.maps.Marker({
-          map: map,
+      Library.clientMarker = new google.maps.Marker({
+          map: Library.map,
           position: results[0].geometry.location
       });
-      client = clientMarker.position;
+      client = Library.clientMarker.position;
       optimalRoute(client);
     } else {
       alert('Google Maps Geocoder could not find your address, please try again. ' + status);
@@ -179,12 +168,13 @@ function geocodeAddress(address){
 }
 
 function optimalRoute(client){
+  var i, max;
   var closestPOP = [40075161, ""]; // farthest possible distance from client (earth's circumference in meters), and placeholder
-  for (var i = 0; i < pops.length; i++){
-    var distanceBetween = google.maps.geometry.spherical.computeDistanceBetween(client, pops[i]);
+  for (i = 0, max = Library.pops.length; i < max; i++){
+    var distanceBetween = google.maps.geometry.spherical.computeDistanceBetween(client, Library.pops[i]);
     if (distanceBetween < closestPOP[0]){
       closestPOP[0] = distanceBetween;
-      closestPOP[1] = pops[i];
+      closestPOP[1] = Library.pops[i];
     }
   }
 
@@ -205,30 +195,29 @@ function optimalRoute(client){
 
   function dijkstra(startingPoint, serverLocation){
     var dijkstraMap = {nyc:{dc:219,chicago:711},chicago:{seattle:1736,nyc:711},seattle:{chicago:1736,losAngeles:962},dc:{nyc:219,atlanta:530},atlanta:{dc:530,miami:606,dallas:721},dallas:{atlanta:721,miami:1112,losAngeles:1238},losAngeles:{dallas:1238,seattle:962},miami:{atlanta:606,dallas:1112}};
-    var graph = new Graph(dijkstraMap);
-    var result = (graph.findShortestPath(startingPoint, serverLocation));
+    var graph = new Library.Graph(dijkstraMap);
+    var result = (graph.findShortestPath(startingPoint, Library.serverLocation));
     return result;
   }
 
-  var stringifiedArray = dijkstra(startingPoint, serverLocation);
+  var dijkstraResult = dijkstra(startingPoint, Library.serverLocation);
 
-  var objectifiedArray = stringifiedArray.map(function(result) {
+  var objectifyResult = dijkstraResult.map(function(result) {
     return hashTable[result];
   });
 
   var optimalPath = [{lat: client.lat(), lng: client.lng()}];
-  for (var i = 0; i < objectifiedArray.length; i++){
-    optimalPath.push({lat: objectifiedArray[i].lat(), lng: objectifiedArray[i].lng()});
+  for (i = 0, max = objectifyResult.length; i < max; i++){
+    optimalPath.push({lat: objectifyResult[i].lat(), lng: objectifyResult[i].lng()});
   }
 
-  optimalPolyline = new google.maps.Polyline({
+  Library.optimalPolyline = new google.maps.Polyline({
     path: optimalPath,
     geodesic: true,
     strokeOpacity: 1,
     strokeColor: '#FF0000',
-    map: map
+    map: Library.map
   });
 }
 
 
-// google.maps.event.addDomListener(window, 'load', initMap);
