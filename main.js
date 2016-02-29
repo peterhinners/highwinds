@@ -193,10 +193,10 @@ function optimalRoute(client){
   })[0];
 
   // Create Dijkstra map
-  function dijkstra(startingPoint, serverLocation){
+  function dijkstra(start, end){
     var dijkstraMap = {nyc:{dc:219,chicago:711},chicago:{seattle:1736,nyc:711},seattle:{chicago:1736,losAngeles:962},dc:{nyc:219,atlanta:530},atlanta:{dc:530,miami:606,dallas:721},dallas:{atlanta:721,miami:1112,losAngeles:1238},losAngeles:{dallas:1238,seattle:962},miami:{atlanta:606,dallas:1112}};
     var graph = new Library.Graph(dijkstraMap);
-    var result = graph.findShortestPath(startingPoint, serverLocation);
+    var result = graph.findShortestPath(start, end);
     return result;
   }
 
