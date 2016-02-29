@@ -13,7 +13,7 @@
 <body>
   <div>
     <form id="form-field" action="javascript:clientInput();">
-      <input type="text" size="50" placeholder="Client Address">
+      <input type="text" id = "input-field" size="70" placeholder="Client Address">
       <select id="dropDown">
         <option value="" disabled selected>Server Address
         <option value="nyc">Switch and Data - 111 8th Ave, New York, NY 10011
@@ -25,7 +25,7 @@
         <option value="seattle">2001 Sixth Ave, Seattle WA, 98121
         <option value="miami">50 Northeast 9th Street, Miami, FL
       </select>
-      <input type="submit" value="Find Route">
+      <input type="submit" value="Find Route" class="submit-field">
     </form>
   </div>
 
@@ -33,7 +33,6 @@
 
   <script src="main.js"></script>
   <script src="custom.js"></script>
-
   <script async defer
       src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAT__AymaDYqLmALnKweZ1tacPJMwzWjMo&callback=initMap&libraries=geometry">
   </script>
