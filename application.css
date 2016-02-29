@@ -13,6 +13,28 @@ body {
   height: 100%;
 }
 
+input, select {
+  border: 1px solid #555;
+  padding: 0.5em;
+  font-size: 13px;
+  line-height: 1.2em;
+  width: 32.75%;
+  background: #fff;
+  background: -webkit-gradient(linear, left top, left bottom, from(#fff), to(#ccc));
+  -webkit-appearance: none;
+  -webkit-box-shadow: 1px 1px 1px #fff;
+  -webkit-border-radius: 0.5em;
+ }
+
+input[type=submit] {
+  color: red;
+  font-weight: bold;
+}
+
+input[type=submit]:hover {
+  color: #cc0000;
+}
+
 .distance {
   position: absolute;
   font-family: sans-serif;

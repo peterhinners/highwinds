@@ -2,8 +2,8 @@ var Library = {};
 
 function initMap() {
   var i, max;
-  // Google Maps custom text overlay code to enable writing of distance text on map;
-  // An alternative is to use images and call those with an icon property
+  // Google Maps custom text overlay code to enable writing of distance text on map.
+  // An alternative is to use images and call those with an icon property.
   function TxtOverlay(pos, txt, cls, map) {
     this.pos = pos;
     this.txt_ = txt;
@@ -103,7 +103,7 @@ function initMap() {
     map: Library.map
   });
 
-  // This section is for calculating and displaying the distance text between POPs...
+  // This section is for calculating and displaying the distance text between networked POPs...
   // The offsets and class names are for fine-tuning the distance text placement.
   // Another option is to use images for the static distance text.
 
@@ -152,14 +152,13 @@ function clientInput() {
 }
 
 function geocodeAddress(address){
-  var client;
   Library.geocoder.geocode( {address:address}, function(results, status){
     if (status == google.maps.GeocoderStatus.OK){
       Library.clientMarker = new google.maps.Marker({
           map: Library.map,
           position: results[0].geometry.location
       });
-      client = Library.clientMarker.position;
+      var client = Library.clientMarker.position;
       optimalRoute(client);
     } else {
       alert('Google Maps Geocoder could not find your address, please try again. ' + status);
@@ -196,7 +195,7 @@ function optimalRoute(client){
   function dijkstra(startingPoint, serverLocation){
     var dijkstraMap = {nyc:{dc:219,chicago:711},chicago:{seattle:1736,nyc:711},seattle:{chicago:1736,losAngeles:962},dc:{nyc:219,atlanta:530},atlanta:{dc:530,miami:606,dallas:721},dallas:{atlanta:721,miami:1112,losAngeles:1238},losAngeles:{dallas:1238,seattle:962},miami:{atlanta:606,dallas:1112}};
     var graph = new Library.Graph(dijkstraMap);
-    var result = (graph.findShortestPath(startingPoint, Library.serverLocation));
+    var result = graph.findShortestPath(startingPoint, Library.serverLocation);
     return result;
   }
 
