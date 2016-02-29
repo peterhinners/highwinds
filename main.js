@@ -42,7 +42,7 @@ function initMap() {
   Library.geocoder = new google.maps.Geocoder();
 
   var mapOptions = {
-    center: {lat: 38.55547456, lng: -95.664999},
+    center: {lat: 36.55547456, lng: -95.664999},
     zoom: 5,
     mapTypeControlOptions: {
       mapTypeIds: [google.maps.MapTypeId.ROADMAP, 'map_style']
@@ -105,7 +105,7 @@ function initMap() {
 
   // This section is for calculating and displaying the distance text between networked POPs...
   // The offsets and class names are for fine-tuning the distance text placement.
-  // Another option is to use images for the static distance text.
+  // Another option is to use images since the distance does not change.
 
   var networkPairs = [
     [Library.nyc, Library.dc, 0.4, "distance nycDC"],
@@ -192,6 +192,7 @@ function optimalRoute(client){
     return hashTable[key] === closestPOP[1];
   })[0];
 
+  // Create Dijkstra map
   function dijkstra(startingPoint, serverLocation){
     var dijkstraMap = {nyc:{dc:219,chicago:711},chicago:{seattle:1736,nyc:711},seattle:{chicago:1736,losAngeles:962},dc:{nyc:219,atlanta:530},atlanta:{dc:530,miami:606,dallas:721},dallas:{atlanta:721,miami:1112,losAngeles:1238},losAngeles:{dallas:1238,seattle:962},miami:{atlanta:606,dallas:1112}};
     var graph = new Library.Graph(dijkstraMap);

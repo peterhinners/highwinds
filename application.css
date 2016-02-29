@@ -20,10 +20,14 @@ input, select {
   line-height: 1.2em;
   width: 32.75%;
   background: #fff;
-  background: -webkit-gradient(linear, left top, left bottom, from(#fff), to(#ccc));
   -webkit-appearance: none;
-  -webkit-box-shadow: 1px 1px 1px #fff;
-  -webkit-border-radius: 0.5em;
+  -moz-appearance: none;
+  border-radius: 0.5em;
+  background: white;
+  background: linear-gradient(to bottom right, #fff, #ccc);
+  background: -webkit-gradient(linear, left top, left bottom, from(#fff), to(#ccc));
+  background: -o-linear-gradient(bottom right, #fff, #ccc);
+  background: -moz-linear-gradient(bottom right, #fff, #ccc);
  }
 
 input[type=submit] {
