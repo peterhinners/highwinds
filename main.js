@@ -168,7 +168,7 @@ function geocodeAddress(address){
 
 function optimalRoute(client){
   var i, max;
-  var closestPOP = [40075161, ""]; // farthest possible distance from client (earth's circumference in meters), and placeholder
+  var closestPOP = [20037581, ""]; // farthest possible distance from client (earth's circumference in meters divided by two), and placeholder
   for (i = 0, max = Library.pops.length; i < max; i++){
     var distanceBetween = google.maps.geometry.spherical.computeDistanceBetween(client, Library.pops[i]);
     if (distanceBetween < closestPOP[0]){
